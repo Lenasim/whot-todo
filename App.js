@@ -1,21 +1,51 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Dimensions, Platform } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Dimensions,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import Todo from './Todo';
 
 const { height, width } = Dimensions.get('window');
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Text style={styles.title}>Whot To Do</Text>
-      <View style={styles.card}>
-        <TextInput style={styles.input} placeholder={"New To Do"}>
+export default class App extends React.Component {
+  state = {
+    newToDo: '',
+  };
 
-        </TextInput>
+  controlNewToDo = (text) => {
+    this.setState({
+      newToDo: text,
+    });
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <StatusBar style='auto' />
+        <Text style={styles.title}>Whot To Do</Text>
+        <View style={styles.card}>
+          <TextInput
+            style={styles.input}
+            placeholder={'New To Do'}
+            placeholderTextColor={'#999'}
+            value={this.state.newToDo}
+            onChangeText={this.controlNewToDo}
+            returnKeyType={'done'}
+            autoCorrect={false}
+          />
+          <ScrollView contentContainerStyle={styles.todos}>
+            <Todo />
+          </ScrollView>
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -25,10 +55,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    color: '#455a64',
+    color: '#999',
     fontSize: 30,
     marginVertical: 30,
-    fontWeight: '200'
+    fontWeight: '200',
   },
   card: {
     backgroundColor: 'white',
@@ -44,12 +74,21 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         shadowOrrset: {
           height: -10,
-          width: 0
-        }
+          width: 0,
+        },
       },
       android: {
-        elevation: 3
-      }
+        elevation: 3,
+      },
     }),
-  }
+  },
+  input: {
+    padding: 20,
+    borderBottomColor: '#bbb',
+    borderBottomWidth: 1,
+    fontSize: 25,
+  },
+  todos: {
+    alignItems: 'center',
+  },
 });
