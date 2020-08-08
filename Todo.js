@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  TextInput,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -14,6 +15,7 @@ class Todo extends React.Component {
   state = {
     isEditing: false,
     isCompleted: false,
+    todoValue: '',
   };
 
   toggleComplete = () => {
@@ -21,11 +23,15 @@ class Todo extends React.Component {
   };
 
   startEditing = () => {
-    this.setState({ isEditing: true });
+    this.setState({ isEditing: true, todoValue: this.props.text });
   };
 
   finishEditing = () => {
     this.setState({ isEditing: false });
+  };
+
+  controlInput = (text) => {
+    this.setState({ todoValue: text });
   };
 
   render() {
@@ -40,15 +46,32 @@ class Todo extends React.Component {
               ]}
             />
           </TouchableOpacity>
-          <Text
-            style={[
-              styles.text,
-              this.state.isCompleted ? styles.completed : styles.uncompleted,
-            ]}
-          >
-            Todo
-          </Text>
+          {this.state.isEditing ? (
+            <TextInput
+              style={[
+                styles.input,
+                styles.text,
+                this.state.isCompleted ? styles.completed : styles.uncompleted,
+              ]}
+              value={this.state.todoValue}
+              multiline={true}
+              onChangeText={this.controlInput}
+              returnKeyType={'done'}
+              //칸 밖을 클릭하면 편집 종료
+              onBlur={this.finishEditing}
+            />
+          ) : (
+            <Text
+              style={[
+                styles.text,
+                this.state.isCompleted ? styles.completed : styles.uncompleted,
+              ]}
+            >
+              {this.props.text}
+            </Text>
+          )}
         </View>
+
         {this.state.isEditing ? (
           <View style={styles.actions}>
             <TouchableOpacity onPressOut={this.finishEditing}>
@@ -109,7 +132,6 @@ const styles = StyleSheet.create({
   column: {
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
     width: width / 2,
   },
   actions: {
@@ -118,6 +140,10 @@ const styles = StyleSheet.create({
   actionContainer: {
     marginVertical: 10,
     marginHorizontal: 10,
+  },
+  input: {
+    marginVertical: 20,
+    width: width / 2,
   },
 });
 
