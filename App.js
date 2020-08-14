@@ -35,7 +35,7 @@ export default class App extends React.Component {
         const newTodoObject = {
           [ID]: {
             id: ID,
-            text: newTodo,
+            text: this.state.newTodo,
             isCompleted: false,
             created: Date.now(),
           },
@@ -81,7 +81,9 @@ export default class App extends React.Component {
             onSubmitEditing={this.addTodo}
           />
           <ScrollView contentContainerStyle={styles.todos}>
-            <Todo text={'todo'} />
+            {Object.values(this.state.todos).map((t) => (
+              <Todo key={t.id} {...t} />
+            ))}
           </ScrollView>
         </View>
       </View>
