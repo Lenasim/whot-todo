@@ -8,23 +8,63 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
+import { AppLoading } from 'expo';
 import { StatusBar } from 'expo-status-bar';
+import { v1 as uuidv1 } from 'uuid';
 import Todo from './Todo';
 
 const { height, width } = Dimensions.get('window');
 
 export default class App extends React.Component {
   state = {
-    newToDo: '',
+    newTodo: '',
+    loadedTodos: false,
+    todos: {},
   };
 
-  controlNewToDo = (text) => {
+  controlNewTodo = (text) => {
     this.setState({
-      newToDo: text,
+      newTodo: text,
     });
   };
 
+  addTodo = () => {
+    if (this.state.newTodo !== '') {
+      this.setState((prevState) => {
+        const ID = uuidv1();
+        const newTodoObject = {
+          [ID]: {
+            id: ID,
+            text: newTodo,
+            isCompleted: false,
+            created: Date.now(),
+          },
+        };
+        const newState = {
+          ...prevState,
+          newTodo: '',
+          todos: {
+            ...prevState.todos,
+            ...newTodoObject,
+          },
+        };
+        return { ...newState };
+      });
+    }
+  };
+
+  loadTodos = () => {
+    this.setState({ loadedTodos: true });
+  };
+
+  componentDidMount() {
+    this.loadTodos();
+  }
+
   render() {
+    if (!this.state.loadedTodos) {
+      return <AppLoading />;
+    }
     return (
       <View style={styles.container}>
         <StatusBar style='auto' />
@@ -34,10 +74,11 @@ export default class App extends React.Component {
             style={styles.input}
             placeholder={'New To Do'}
             placeholderTextColor={'#999'}
-            value={this.state.newToDo}
-            onChangeText={this.controlNewToDo}
+            value={this.state.newTodo}
+            onChangeText={this.controlNewTodo}
             returnKeyType={'done'}
             autoCorrect={false}
+            onSubmitEditing={this.addTodo}
           />
           <ScrollView contentContainerStyle={styles.todos}>
             <Todo text={'todo'} />
