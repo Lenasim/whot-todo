@@ -53,6 +53,17 @@ export default class App extends React.Component {
     }
   };
 
+  deleteTodo = (id) => {
+    this.setState((prevState) => {
+      delete prevState.todos[id];
+      const newState = {
+        ...prevState,
+        ...todos,
+      };
+      return { ...newState };
+    });
+  };
+
   loadTodos = () => {
     this.setState({ loadedTodos: true });
   };
@@ -82,7 +93,7 @@ export default class App extends React.Component {
           />
           <ScrollView contentContainerStyle={styles.todos}>
             {Object.values(this.state.todos).map((t) => (
-              <Todo key={t.id} {...t} />
+              <Todo key={t.id} {...t} deleteTodo={this.deleteTodo} />
             ))}
           </ScrollView>
         </View>

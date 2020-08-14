@@ -87,7 +87,7 @@ class Todo extends React.Component {
                 <MaterialIcons name='edit' size={24} color='black' />
               </View>
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPressOut={() => deleteTodo(this.props.id)}>
               <View style={styles.actionContainer}>
                 <MaterialIcons name='close' size={24} color='black' />
               </View>
