@@ -53,12 +53,44 @@ export default class App extends React.Component {
     }
   };
 
+  completeTodo = (id) => {
+    this.setState((prevState) => {
+      const newState = {
+        ...prevState,
+        todos: {
+          ...prevState.todos,
+          [id]: {
+            ...prevState.todos[id],
+            isCompleted: true,
+          },
+        },
+      };
+      return { ...newState };
+    });
+  };
+
+  uncompleteTodo = (id) => {
+    this.setState((prevState) => {
+      const newState = {
+        ...prevState,
+        todos: {
+          ...prevState.todos,
+          [id]: {
+            ...prevState.todos[id],
+            isCompleted: false,
+          },
+        },
+      };
+      return { ...newState };
+    });
+  };
+
   deleteTodo = (id) => {
     this.setState((prevState) => {
       delete prevState.todos[id];
       const newState = {
         ...prevState,
-        ...todos,
+        ...this.state.todos,
       };
       return { ...newState };
     });
@@ -93,7 +125,13 @@ export default class App extends React.Component {
           />
           <ScrollView contentContainerStyle={styles.todos}>
             {Object.values(this.state.todos).map((t) => (
-              <Todo key={t.id} {...t} deleteTodo={this.deleteTodo} />
+              <Todo
+                key={t.id}
+                {...t}
+                deleteTodo={this.deleteTodo}
+                completeTodo={this.completeTodo}
+                uncompleteTodo={this.uncompleteTodo}
+              />
             ))}
           </ScrollView>
         </View>

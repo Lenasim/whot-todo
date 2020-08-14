@@ -14,12 +14,15 @@ const { height, width } = Dimensions.get('window');
 class Todo extends React.Component {
   state = {
     isEditing: false,
-    isCompleted: false,
     todoValue: '',
   };
 
   toggleComplete = () => {
-    this.setState({ isCompleted: !this.state.isCompleted });
+    if (this.props.isCompleted) {
+      this.props.uncompleteTodo(this.props.id);
+    } else {
+      this.props.completeTodo(this.props.id);
+    }
   };
 
   startEditing = () => {
@@ -42,7 +45,7 @@ class Todo extends React.Component {
             <View
               style={[
                 styles.radio,
-                this.state.isCompleted ? styles.completed : styles.uncompleted,
+                this.props.isCompleted ? styles.completed : styles.uncompleted,
               ]}
             />
           </TouchableOpacity>
@@ -51,7 +54,7 @@ class Todo extends React.Component {
               style={[
                 styles.input,
                 styles.text,
-                this.state.isCompleted ? styles.completed : styles.uncompleted,
+                this.props.isCompleted ? styles.completed : styles.uncompleted,
               ]}
               value={this.state.todoValue}
               multiline={true}
@@ -64,7 +67,7 @@ class Todo extends React.Component {
             <Text
               style={[
                 styles.text,
-                this.state.isCompleted ? styles.completed : styles.uncompleted,
+                this.props.isCompleted ? styles.completed : styles.uncompleted,
               ]}
             >
               {this.props.text}
@@ -87,7 +90,9 @@ class Todo extends React.Component {
                 <MaterialIcons name='edit' size={24} color='black' />
               </View>
             </TouchableOpacity>
-            <TouchableOpacity onPressOut={() => deleteTodo(this.props.id)}>
+            <TouchableOpacity
+              onPressOut={() => this.props.deleteTodo(this.props.id)}
+            >
               <View style={styles.actionContainer}>
                 <MaterialIcons name='close' size={24} color='black' />
               </View>
