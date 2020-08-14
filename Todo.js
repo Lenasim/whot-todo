@@ -31,6 +31,7 @@ class Todo extends React.Component {
 
   finishEditing = () => {
     this.setState({ isEditing: false });
+    this.props.updateTodo(this.props.id, this.state.todoValue);
   };
 
   controlInput = (text) => {
