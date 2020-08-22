@@ -7,6 +7,8 @@ import {
   Dimensions,
   Platform,
   ScrollView,
+  AsyncStorage,
+  ClippingRectangle,
 } from 'react-native';
 import { AppLoading } from 'expo';
 import { StatusBar } from 'expo-status-bar';
@@ -48,6 +50,7 @@ export default class App extends React.Component {
             ...newTodoObject,
           },
         };
+        this.saveTodos(newState.todos);
         return { ...newState };
       });
     }
@@ -65,6 +68,7 @@ export default class App extends React.Component {
           },
         },
       };
+      this.saveTodos(newState.todos);
       return { ...newState };
     });
   };
@@ -81,6 +85,7 @@ export default class App extends React.Component {
           },
         },
       };
+      this.saveTodos(newState.todos);
       return { ...newState };
     });
   };
@@ -97,6 +102,7 @@ export default class App extends React.Component {
           },
         },
       };
+      this.saveTodos(newState.todos);
       return { ...newState };
     });
   };
@@ -112,8 +118,20 @@ export default class App extends React.Component {
     });
   };
 
-  loadTodos = () => {
-    this.setState({ loadedTodos: true });
+  loadTodos = async () => {
+    try {
+      const todos = await AsyncStorage.getItem('todos');
+      const parsedTodos = JSON.parse(todos);
+      this.setState({ loadedTodos: true, todos: parsedTodos });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  saveTodos = (newTodos) => {
+    //asyncStorage는 object가 아닌 string만 저장할 수 있다. 그러므로 아래 코드는 에러!
+    // const _saveTodos = AsyncStorage.setItem('todos', newTodos);
+    const _saveTodos = AsyncStorage.setItem('todos', Json.stringify(newTodos));
   };
 
   componentDidMount() {
@@ -140,16 +158,18 @@ export default class App extends React.Component {
             onSubmitEditing={this.addTodo}
           />
           <ScrollView contentContainerStyle={styles.todos}>
-            {Object.values(this.state.todos).map((t) => (
-              <Todo
-                key={t.id}
-                {...t}
-                deleteTodo={this.deleteTodo}
-                completeTodo={this.completeTodo}
-                updateTodo={this.updateTodo}
-                uncompleteTodo={this.uncompleteTodo}
-              />
-            ))}
+            {Object.values(this.state.todos)
+              .reverse()
+              .map((t) => (
+                <Todo
+                  key={t.id}
+                  {...t}
+                  deleteTodo={this.deleteTodo}
+                  completeTodo={this.completeTodo}
+                  updateTodo={this.updateTodo}
+                  uncompleteTodo={this.uncompleteTodo}
+                />
+              ))}
           </ScrollView>
         </View>
       </View>
